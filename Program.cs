@@ -1,8 +1,15 @@
+using Services.Config;
+
 var builder = WebApplication.CreateBuilder(args);
 
-var Port = 5300;
+IConfigurationSection appConfigSection = builder.Configuration.GetSection(AppConfig.SectionName);
+builder.Services.Configure<AppConfig>(appConfigSection);
 
-builder.WebHost.UseUrls($"http://*:{Port}");
+var appConfig = appConfigSection.Get<AppConfig>();
+
+if (appConfig is null) throw new Exception("AppConfig not provided.");
+
+builder.WebHost.UseUrls($"http://*:{appConfig.Port}");
 
 builder.Services.AddOpenApi();
 
@@ -17,10 +24,10 @@ app.UseHttpsRedirection();
 
 app.MapGet("health", () => new
 {
-  service = "Services",
-  status = "Running",
-  port = Port,
-  time = TimeOnly.FromDateTime(DateTime.UtcNow)
+  service = appConfig.Service,
+  status = appConfig.Status,
+  port = appConfig.Port,
+  time = appConfig.Time
 });
 
 await app.RunAsync();
