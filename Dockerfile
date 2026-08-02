@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
 USER app
 WORKDIR /app
-EXPOSE 5100
+EXPOSE 5300
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
