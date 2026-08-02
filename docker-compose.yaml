@@ -1,0 +1,31 @@
+services:
+  services-db:
+    container_name: services_db
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=jrdev
+      - POSTGRES_DB=pepi
+      - POSTGRES_PASSWORD=mypass123456
+
+  services:
+    container_name: services
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - services-db
+    ports:
+      - "5300:5300"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+      AppConfig__Port: 5300
+      AppConfig__Service: Services
+      AppConfig__Status: Running
+    networks:
+      - local-network
+
+networks:
+  local-network:
+    name: local-network
+    external: true
